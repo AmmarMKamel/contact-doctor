@@ -1,0 +1,24 @@
+﻿@model CompleteAppointment
+
+<h1>Complete Appointment with @Model.Doctor.Name</h1>
+
+<form>
+    <div class="mb-3">
+        <label for="patient-name" class="form-label">Patient Name</label>
+        <input type="text" class="form-control" id="patient-name" name="patientName">
+    </div>
+    <div class="d-flex justify-content-between gap-3 mb-3">
+        <div class="flex-grow-1">
+            <label for="appointment-date" class="form-label">Appointment Date</label>
+            <input type="date" class="form-control" id="appointment-date" name="appointmentDate" readonly>
+        </div>
+        <div class="flex-grow-1">
+            <label for="appointment-time" class="form-label">Appointment Time</label>
+            <input type="time" class="form-control" id="appointment-time" name="appointmentTime" readonly>
+        </div>
+    </div>
+
+    <input type="hidden" id="doctor-id" name="doctorId" value="@Model.Doctor.Id">
+
+    <button type="submit" class="btn btn-outline-primary">Complete Appointment</button>
+</form>

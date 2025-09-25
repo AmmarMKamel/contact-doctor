@@ -1,0 +1,30 @@
+﻿@model Appointments
+
+<h1>All Appointments</h1>
+
+@if (Model.AppointmentsList.Count > 0)
+{
+    <table class="table-primary table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var appointment in Model.AppointmentsList)
+        {
+            <tr>
+                <td>@appointment.PatientName</td>
+                <td>@appointment.Doctor?.Name</td>
+                <td>@appointment.Date.ToString("MM/dd/yyyy")</td>
+                <td>@appointment.Time.ToString(@"hh\:mm")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+} else {
+  <h2 class="text-center">No Appointments Available to Show!</h2>  
+}

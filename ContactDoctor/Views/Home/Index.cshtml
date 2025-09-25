@@ -1,0 +1,30 @@
+﻿@model Home
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Our Hospital</h1>
+    <p>Thank you for choosing our hospital for your healthcare needs.</p>
+    <p>Here, we strive to provide the highest quality medical care to our patients.</p>
+    <p>Learn more about our services and specialties:</p>
+
+    @if (Model.Specializations.Count > 0)
+    {
+        <div class="btn-group mb-3" role="group" aria-label="Basic outlined example">
+            @foreach (var specialization in Model.Specializations)
+            {
+                <a
+                    class="btn btn-outline-primary"
+                    asp-controller="Doctors"
+                    asp-action="BookAppointment"
+                    asp-route-specialization="@specialization"
+                >
+                    @specialization
+                </a>
+            }
+        </div>
+    }
+
+    <p>If you have any questions or need assistance, please don't hesitate to contact us.</p>
+</div>
