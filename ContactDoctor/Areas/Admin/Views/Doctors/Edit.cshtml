@@ -1,0 +1,64 @@
+﻿@model Doctor
+
+<div class="container py-3">
+	<h1 class="mb-3">Edit Doctor - @Model.Name</h1>
+
+	<form method="post" enctype="multipart/form-data">
+		<div class="form-floating mb-3">
+			<input type="text" class="form-control" id="name" name="name" placeholder="Name" value="@Model.Name">
+			<label for="name">Name</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input type="text"
+				   class="form-control"
+				   id="specialization"
+				   name="specialization"
+				   placeholder="Specialization"
+				   value="@Model.Specialization">
+			<label for="specialization">Specialization</label>
+		</div>
+		<div class="mb-3">
+			<label for="img">Image</label>
+			<input type="file" class="form-control" id="img" name="img" accept="image/*" value="@Model.Img" />
+			<img src="~/images/@Model.Img"
+				 alt="Preview"
+				 id="preview"
+				 class="img-fluid mt-3 mx-auto"
+				 style="display: @(string.IsNullOrEmpty(Model.Img) ? "none" : "block"); max-height: 200px" />
+		</div>
+
+		<button type="submit" class="btn btn-outline-success">Save</button>
+	</form>
+</div>
+
+@section Scripts {
+	<script type="text/javascript">
+		const fileInput = document.getElementById("img");
+		const previewImage = document.getElementById("preview");
+
+		fileInput.addEventListener('change', function(e) {
+			const file = e.target.files[0];
+
+			if (file) {
+				if (!file.type.match('image.*')) {
+					alert('Please select a valid image file (JPG, PNG, GIF, WebP).');
+					return;
+				}
+
+				if (file.size > 5 * 1024 * 1024) {
+					alert('File size exceeds 5MB limit. Please choose a smaller image.');
+					return;
+				}
+
+				const reader = new FileReader();
+
+				reader.onload = function(e) {
+					previewImage.src = e.target.result;
+					previewImage.style.display = 'block';
+				};
+
+				reader.readAsDataURL(file);
+			}
+		});
+	</script>
+}

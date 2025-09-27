@@ -1,0 +1,34 @@
+﻿@model List<Doctor>
+
+<div class="container py-3">
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Name</th>
+				<th>Specialization</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for(var i = 0; i < Model.Count; i++)
+			{				
+				<tr>
+					<td>@(i + 1)</td>
+					<td>@Model[i].Name</td>
+					<td>@Model[i].Specialization</td>
+					<td>
+						<span class="d-flex gap-3">
+							<a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@Model[i].Id">
+								Edit
+							</a>
+							<a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@Model[i].Id">
+								Delete
+							</a>
+						</span>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
