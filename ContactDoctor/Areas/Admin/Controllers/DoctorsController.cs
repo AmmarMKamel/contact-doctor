@@ -17,6 +17,34 @@ namespace ContactDoctor.Areas.Admin.Controllers
             return View(doctors);
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Doctor doctor, IFormFile? img)
+        {
+            if (img != null && img?.Length > 0)
+            {
+                var ext = Path.GetExtension(img.FileName).ToLowerInvariant();
+                var fileName = Guid.NewGuid().ToString() + ext;
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await img.CopyToAsync(stream);
+                    doctor.Img = fileName;
+                }
+            }
+
+            await _context.Doctors.AddAsync(doctor);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
+        }
+
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var doctor = await _context.Doctors.FindAsync(id);
@@ -45,7 +73,7 @@ namespace ContactDoctor.Areas.Admin.Controllers
             }
             else
             {
-                var ext = Path.GetExtension(img.FileName);
+                var ext = Path.GetExtension(img.FileName).ToLowerInvariant();
                 var fileName = Guid.NewGuid().ToString() + ext;
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
 
