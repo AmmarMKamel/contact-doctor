@@ -67,7 +67,7 @@ public class DoctorsController : Controller
     {
         var existingAppointment = await _context.Appointments
             .SingleOrDefaultAsync(
-                a => a.Time == appointment.AppointmentTime && a.DoctorId == appointment.DoctorId);
+                a => a.AppointmentDateTime == appointment.AppointmentDateTime && a.DoctorId == appointment.DoctorId);
         if (existingAppointment != null)
         {
             return Results.BadRequest();
@@ -76,8 +76,7 @@ public class DoctorsController : Controller
         var newAppointment = new Appointment()
         {
             PatientName = appointment.PatientName,
-            Date = appointment.AppointmentDate,
-            Time = appointment.AppointmentTime,
+            AppointmentDateTime = appointment.AppointmentDateTime,
             DoctorId = appointment.DoctorId
         };
         await _context.Appointments.AddAsync(newAppointment);
@@ -90,8 +89,7 @@ public class DoctorsController : Controller
     {
         var appointments = await _context.Appointments
             .Include(a => a.Doctor)
-            .OrderBy(a => a.Date)
-            .ThenBy(a => a.Time)
+            .OrderBy(a => a.AppointmentDateTime)
             .ThenBy(a => a.Doctor.Name)
             .ToListAsync();
 

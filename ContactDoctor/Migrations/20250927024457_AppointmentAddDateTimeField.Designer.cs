@@ -4,6 +4,7 @@ using ContactDoctor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContactDoctor.Migrations
 {
     [DbContext(typeof(ContactDoctorContext))]
-    partial class ContactDoctorContextModelSnapshot : ModelSnapshot
+    [Migration("20250927024457_AppointmentAddDateTimeField")]
+    partial class AppointmentAddDateTimeField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

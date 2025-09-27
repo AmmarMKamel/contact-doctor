@@ -3,22 +3,101 @@
 <h1>Complete Appointment with @Model.Doctor.Name</h1>
 
 <form>
-    <div class="mb-3">
-        <label for="patient-name" class="form-label">Patient Name</label>
-        <input type="text" class="form-control" id="patient-name" name="patientName">
-    </div>
-    <div class="d-flex justify-content-between gap-3 mb-3">
-        <div class="flex-grow-1">
-            <label for="appointment-date" class="form-label">Appointment Date</label>
-            <input type="date" class="form-control" id="appointment-date" name="appointmentDate" readonly>
-        </div>
-        <div class="flex-grow-1">
-            <label for="appointment-time" class="form-label">Appointment Time</label>
-            <input type="time" class="form-control" id="appointment-time" name="appointmentTime" readonly>
-        </div>
-    </div>
+	<div class="mb-3">
+		<label for="patient-name" class="form-label">Patient Name</label>
+		<input type="text" class="form-control" id="patient-name" name="patientName">
+	</div>
+	<div class="d-flex justify-content-between gap-3 mb-3">
+		<div class="flex-grow-1">
+			<label for="appointment-date" class="form-label">Appointment Date</label>
+			<input type="date" class="form-control" id="appointment-date" name="appointmentDate" readonly>
+		</div>
+		<div class="flex-grow-1">
+			<label for="appointment-time" class="form-label">Appointment Time</label>
+			<input type="time" class="form-control" id="appointment-time" name="appointmentTime" readonly>
+		</div>
+	</div>
 
-    <input type="hidden" id="doctor-id" name="doctorId" value="@Model.Doctor.Id">
+	<input type="hidden" id="doctor-id" name="doctorId" value="@Model.Doctor.Id">
 
-    <button type="submit" class="btn btn-outline-primary">Complete Appointment</button>
+	<button type="submit" class="btn btn-outline-primary">Complete Appointment</button>
 </form>
+
+@section Scripts {
+	<script type="text/javascript">
+		const datePicker = flatpickr("#appointment-date", {
+			minDate: "today",
+			dateFormat: "Y-m-d",
+			disable: [function (date) {
+				return date.getDay() === 5 || date.getDay() === 6;
+			}]
+		});
+
+		// Time Picker
+		const timePicker = flatpickr("#appointment-time", {
+			enableTime: true,
+			noCalendar: true,
+			dateFormat: "H:i",
+			time_24hr: true,
+			minuteIncrement: 30,
+			minTime: "09:00",
+			maxTime: "21:00"
+		});
+
+		const patientNameInput = document.getElementById("patient-name");
+		const doctorId = document.getElementById("doctor-id").value;
+
+		// Form validation
+		const form = document.querySelector('form');
+		form.addEventListener('submit', async function (e) {
+			e.preventDefault();
+			if (!datePicker.input.value || !timePicker.input.value || !patientNameInput.value) {
+				if (!datePicker.input.value) {
+					datePicker.input.classList.add('is-invalid');
+				}
+				if (!timePicker.input.value) {
+					timePicker.input.classList.add('is-invalid');
+				}
+				if (!patientNameInput.value) {
+					patientNameInput.classList.add('is-invalid');
+				}
+			}
+
+			const merged = new Date(`${datePicker.input.value}T${timePicker.input.value}:00`);
+
+			const appointment = {
+				patientName: patientNameInput.value.trim(),
+				appointmentDateTime: merged.toISOString(),
+				doctorId
+			};
+
+			const response = await fetch("/Doctors/CompleteAppointmentBooking", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(appointment)
+			});
+			if (response.ok) {
+				Swal.fire({
+					title: "Success!",
+					text: "You booked the appointment!",
+					icon: "success"
+				});
+			} else {
+				Swal.fire({
+					title: "Failed!",
+					text: "This appointment is already booked!",
+					icon: "error"
+				});
+			}
+		});
+
+		// Remove invalid class when user starts typing
+		[datePicker.input, timePicker.input, patientNameInput].forEach(input => {
+			input.addEventListener('change', function () {
+				this.classList.remove('is-invalid');
+			});
+		});
+	</script>
+}

@@ -1,0 +1,90 @@
+﻿@model Appointment
+
+<div class="container">
+	<h1>Edit Appointment with @Model.Doctor.Name</h1>
+
+	<form method="post">
+		<div class="mb-3">
+			<label asp-for="@Model.PatientName" class="form-label">Patient Name</label>
+			<input type="text" class="form-control" asp-for="@Model.PatientName">
+		</div>
+		<div class="d-flex justify-content-between gap-3 mb-3">
+			<div class="flex-grow-1">
+				<label for="appointment-date" class="form-label">Appointment Date</label>
+				<input type="text" class="form-control" id="appointment-date" name="appointmentDate" readonly>
+			</div>
+			<div class="flex-grow-1">
+				<label for="appointment-time" class="form-label">Appointment Time</label>
+				<input type="text" class="form-control" id="appointment-time" name="appointmentTime" readonly>
+			</div>
+		</div>
+
+		<input type="hidden" id="doctor-id" name="doctorId" value="@Model.Doctor.Id">
+		<input type="hidden" asp-for="AppointmentDateTime" id="hidden-datetime">
+
+		<button type="submit" class="btn btn-outline-primary">Save</button>
+	</form>
+</div>
+
+@section Scripts {
+	<script type="text/javascript">
+		const defaultDate = "@Model.AppointmentDateTime.ToString("yyyy-MM-dd")";
+		const defaultTime = "@Model.AppointmentDateTime.ToString("HH:mm")";
+
+		const initialDateTime = new Date(`${defaultDate}T${defaultTime}:00`);
+
+		let datePicker, timePicker;
+		const hiddenDateTime = document.getElementById("hidden-datetime");
+
+		// Initialize hidden field
+		hiddenDateTime.value = flatpickr.formatDate(initialDateTime, "Y-m-d\\TH:i:S");
+		// => "2025-09-27T14:30:00"
+
+		// Date Picker
+		datePicker = flatpickr("#appointment-date", {
+			defaultDate: initialDateTime,
+			dateFormat: "Y-m-d",
+			disable: [
+				function (date) {
+					return date.getDay() === 5 || date.getDay() === 6;
+				}
+			],
+			onChange: function (selectedDates) {
+				if (selectedDates.length) {
+					const date = selectedDates[0];
+					const time = timePicker.selectedDates[0] || initialDateTime;
+
+					const merged = new Date(date);
+					merged.setHours(time.getHours(), time.getMinutes());
+
+					timePicker.setDate(merged, false);
+					hiddenDateTime.value = flatpickr.formatDate(merged, "Y-m-d\\TH:i:S");
+				}
+			}
+		});
+
+		// Time Picker
+		timePicker = flatpickr("#appointment-time", {
+			defaultDate: initialDateTime,
+			enableTime: true,
+			noCalendar: true,
+			dateFormat: "H:i",
+			time_24hr: true,
+			minuteIncrement: 30,
+			minTime: "09:00",
+			maxTime: "21:00",
+			onChange: function (selectedDates) {
+				if (selectedDates.length) {
+					const time = selectedDates[0];
+					const date = datePicker.selectedDates[0] || initialDateTime;
+
+					const merged = new Date(date);
+					merged.setHours(time.getHours(), time.getMinutes());
+
+					datePicker.setDate(merged, false);
+					hiddenDateTime.value = flatpickr.formatDate(merged, "Y-m-d\\TH:i:S");
+				}
+			}
+		});
+	</script>
+}
